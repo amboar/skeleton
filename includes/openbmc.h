@@ -36,9 +36,10 @@ static inline uint32_t devmem_read(void* addr)
  //       write_reg(reg,val);
 //}
 #else
-static inline devmem(uint32_t val, uint32_t reg)
+static inline void devmem(uint32_t val, uint32_t reg)
 {
 }
+
 static inline uint32_t devmem_read(void* addr)
 {
 	return 0;
