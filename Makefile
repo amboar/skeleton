@@ -27,6 +27,7 @@ all: setup libopenbmc_intf power_control led_controller button_power button_rese
 setup: 
 	mkdir -p obj lib
 
+.PHONY: clean
 clean:  
 	rm -rf obj lib bin/*.exe
 
