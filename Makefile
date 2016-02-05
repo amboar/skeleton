@@ -36,8 +36,8 @@ libopenbmc_intf: openbmc_intf.o
 power_control: power_control_obj.o gpio.o object_mapper.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/gpio.o obj/power_control_obj.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
 
-led_controller: led_controller.o gpio.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/gpio.o obj/led_controller.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
+led_controller: led_controller_obj.o gpio.o object_mapper.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/gpio.o obj/led_controller_obj.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
 
 led_controller_new: led_controller_new.o
 	$(CC) -o bin/$@.exe obj/led_controller_new.o $(LDFLAGS) $(LIBS) -lsystemd
@@ -70,8 +70,8 @@ flasher:  $(OBJS2) flasher_obj.o libopenbmc_intf
 pflash:  $(OBJS2) pflash.o
 	$(CC) -o bin/$@ obj/pflash.o $(OBJS3) $(LDFLAGS)
 
-hwmons_barreleye: hwmons_barreleye.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/hwmons_barreleye.o obj/object_mapper.o  $(LDFLAGS) $(LIBS)
+hwmons_barreleye: hwmons_barreleye_obj.o object_mapper.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/hwmons_barreleye_obj.o obj/object_mapper.o  $(LDFLAGS) $(LIBS)
 
 control_bmc: control_bmc_obj.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/control_bmc_obj.o $(LDFLAGS) $(LIBS)
