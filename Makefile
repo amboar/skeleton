@@ -11,10 +11,10 @@ LDLIBS=$(shell pkg-config --libs gio-unix-2.0 glib-2.0) -Llib -lopenbmc_intf
 	$(CC) -c -fPIC -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
 %.o: objects/%.c
-	$(CC) -c -o obj/$@ $< $(LDLIBS) $(CFLAGS) $(INCLUDES)
+	$(CC) -c -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
 %.o: includes/%.c
-	$(CC) -c -o obj/$@ $< $(LDLIBS) $(CFLAGS) $(INCLUDES)
+	$(CC) -c -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
 %.o: objects/pflash/%.c
 	$(CC) -c -o obj/$@ $< $(CFLAGS) $(INCLUDES)
