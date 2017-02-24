@@ -177,42 +177,53 @@ def usage():
             command_help
         )
 
+import argparse
+
 def main():
     bus = dbus.SystemBus()
-
-    if (len(sys.argv) == 1 or sys.argv[1] == "-h" or dbus_objects.has_key(
-            sys.argv[1]) == False):
-        print usage()
-        exit(0)
 
     method_name = ""
     property_name = ""
 
-    sys.argv.pop(0)
-    objinfo = dbus_objects[sys.argv.pop(0)]
+    parser = argparse.ArgumentParser(usage=usage())
+    subcmd = parser.add_subparsers(dest="command")
+    for k, v in dbus_objects.items():
+        subparser = subcmd.add_parser(k)
+        if 'method' in v:
+            subparser.set_defaults(method=v['method'])
+        else:
+            subparser.add_argument("method", nargs='?')
+        if 'value' in v:
+            subparser.set_defaults(value=v['value'])
+        else:
+            subparser.add_argument("value", nargs='?')
+        subparser.add_argument("args", nargs=argparse.REMAINDER)
+        subparser.set_defaults(
+                property=v['property'] if 'property' in v else None,
+                bus_name=v['bus_name'],
+                object_name=v['object_name'],
+                interface_name=v['interface_name'],
+                transform=v['transform'] if 'transform' in v else None)
 
-    if (objinfo.has_key('method')):
-        method_name = objinfo['method']
-    elif (objinfo.has_key('property')):
-        property_name = objinfo['property']
-    elif (len(sys.argv) > 0):
-        ## if command line args left and method not specified
-        ## then next arg must be method name
-        method_name = sys.argv.pop(0)
+    args = parser.parse_args()
 
-    bus_name = objinfo['bus_name']
-    obj_path = objinfo['object_name']
-    intf_name = objinfo['interface_name']
+    method_name = args.method
+    property_name = args.property
+
+    bus_name = args.bus_name
+    obj_path = args.object_name
+    intf_name = args.interface_name
+
     obj = bus.get_object(bus_name, obj_path)
 
-    if (method_name != ""):
+    if method_name:
         methd = obj.get_dbus_method(method_name, intf_name)
         try:
             data = methd(*sys.argv)
             fix_byte(data, None, None)
             pydata = json.loads(json.dumps(data))
-            if 'transform' in objinfo:
-                objinfo['transform'](pydata)
+            if args.transform:
+                args.transform(pydata)
             printDict("", pydata)
         except Exception as e:
             print e
@@ -221,12 +232,9 @@ def main():
                 print "ERROR: Invalid method: " + method_name
             else:
                 print "ERROR: Incorrect arguments passed to method"
-    elif (property_name != ""):
+    elif property_name:
         intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-        if (objinfo.has_key('value')):
-            property_value = objinfo['value']
-        else:
-            property_value = eval(sys.argv.pop(0))
+        property_value = args.value
         intf.Set(intf_name, property_name, property_value)
     else:
         intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
