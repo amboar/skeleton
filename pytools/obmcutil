@@ -156,24 +156,27 @@ dbus_objects = {
     },
 }
 
+def usage():
+    print "Usage: obmcutil [command] [[method] [*args]]"
+    print "\tIf [method] is blank, then all properties are printed\n"
+    print "Available commands:"
+    for name in sorted(dbus_objects.keys()):
+        m = ""
+        if (dbus_objects[name].has_key('method') == True):
+            m = " (" + dbus_objects[name]['interface_name'] + "->" + \
+                dbus_objects[name]['method'] + ")"
+        elif (dbus_objects[name].has_key('property') == True):
+            m = " (" + dbus_objects[name]['interface_name'] + "->" + \
+                dbus_objects[name]['property'] + ")"
+
+        print "\t" + name + m
+
 def main():
     bus = dbus.SystemBus()
 
     if (len(sys.argv) == 1 or sys.argv[1] == "-h" or dbus_objects.has_key(
             sys.argv[1]) == False):
-        print "Usage: obmcutil [command] [[method] [*args]]"
-        print "\tIf [method] is blank, then all properties are printed\n"
-        print "Available commands:"
-        for name in sorted(dbus_objects.keys()):
-            m = ""
-            if (dbus_objects[name].has_key('method') == True):
-                m = " (" + dbus_objects[name]['interface_name'] + "->" + \
-                    dbus_objects[name]['method'] + ")"
-            elif (dbus_objects[name].has_key('property') == True):
-                m = " (" + dbus_objects[name]['interface_name'] + "->" + \
-                    dbus_objects[name]['property'] + ")"
-
-            print "\t" + name + m
+        usage()
         exit(0)
 
     method_name = ""
